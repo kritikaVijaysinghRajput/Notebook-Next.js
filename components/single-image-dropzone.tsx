@@ -5,6 +5,7 @@ import { UploadCloudIcon, X } from "lucide-react";
 import * as React from "react";
 import { useDropzone, type DropzoneOptions } from "react-dropzone";
 import { twMerge } from "tailwind-merge";
+import Image from "next/image";
 
 import { Spinner } from "./spinner";
 
@@ -51,16 +52,13 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const imageUrl = React.useMemo(() => {
       if (typeof value === "string") {
-        // in case an url is passed in, use it to display the image
         return value;
       } else if (value) {
-        // in case a file is passed in, create a base64 url to display the image
         return URL.createObjectURL(value);
       }
       return null;
     }, [value]);
 
-    // dropzone configuration
     const {
       getRootProps,
       getInputProps,
@@ -82,7 +80,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       ...dropzoneOptions,
     });
 
-    // styling
     const dropZoneClassName = React.useMemo(
       () =>
         twMerge(
@@ -105,7 +102,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
       ]
     );
 
-    // error validation messages
     const errorMessage = React.useMemo(() => {
       if (fileRejections[0]) {
         const { errors } = fileRejections[0];
@@ -138,18 +134,18 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             },
           })}
         >
-          {/* Main File Input */}
           <input ref={ref} {...getInputProps()} />
 
           {imageUrl ? (
-            // Image Preview
-            <img
+            <Image
               className="h-full w-full rounded-md object-cover"
               src={imageUrl}
               alt={acceptedFiles[0]?.name}
+              width={width}
+              height={height}
+              layout="responsive"
             />
           ) : (
-            // Upload Icon
             <div className="flex flex-col items-center justify-center text-xs text-gray-400">
               <UploadCloudIcon className="mb-2 h-7 w-7" />
               <div className="text-gray-400">
@@ -158,7 +154,6 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
 
-          {/* Remove Image Icon */}
           {imageUrl && !disabled && (
             <div
               className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
